@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 import java.util.Currency;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.isNull;
+import static org.mockito.Matchers.notNull;
 import static org.mockito.Mockito.when;
 
 public class CurrencyConvertorImplTest {
@@ -32,6 +34,16 @@ public class CurrencyConvertorImplTest {
             .thenReturn(new BigDecimal("-22.26"));
         when(currencyConvertorMock.convert(Currency.getInstance("USD"), Currency.getInstance("CZK"), new BigDecimal("1.5")))
             .thenReturn(new BigDecimal("33.40"));
+        when(currencyConvertorMock.convert((Currency) isNull(), (Currency) notNull(), (BigDecimal) notNull()))
+            .thenThrow(new IllegalArgumentException());
+        when(currencyConvertorMock.convert((Currency) notNull(), (Currency) isNull(), (BigDecimal) notNull()))
+            .thenThrow(new IllegalArgumentException());
+        when(currencyConvertorMock.convert((Currency) notNull(), (Currency) notNull(), (BigDecimal) isNull()))
+            .thenThrow(new IllegalArgumentException());
+        when(currencyConvertorMock.convert(Currency.getInstance("EUR"), Currency.getInstance("CHF"), new BigDecimal("1")))
+            .thenThrow(new UnknownExchangeRateException("CHF is not known currency."));
+        when(currencyConvertorMock.convert(Currency.getInstance("EUR"), Currency.getInstance("USD"), new BigDecimal("1")))
+            .thenThrow(new UnknownExchangeRateException("Unknown exchange rate for given pair."));
     }
 
     @Test
@@ -52,29 +64,29 @@ public class CurrencyConvertorImplTest {
             Currency.getInstance("CZK"), new BigDecimal("1.5")));
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testConvertWithNullSourceCurrency() {
-        fail("Test is not implemented yet.");
+        currencyConvertorMock.convert(null, Currency.getInstance("CZK"), new BigDecimal("1"));
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testConvertWithNullTargetCurrency() {
-        fail("Test is not implemented yet.");
+        currencyConvertorMock.convert(Currency.getInstance("EUR"), null, new BigDecimal("1"));
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testConvertWithNullSourceAmount() {
-        fail("Test is not implemented yet.");
+        currencyConvertorMock.convert(Currency.getInstance("EUR"), Currency.getInstance("CZK"), null);
     }
 
-    @Test
+    @Test(expected = UnknownExchangeRateException.class)
     public void testConvertWithUnknownCurrency() {
-        fail("Test is not implemented yet.");
+        currencyConvertorMock.convert(Currency.getInstance("EUR"), Currency.getInstance("CHF"), new BigDecimal("1"));
     }
 
-    @Test
+    @Test(expected = UnknownExchangeRateException.class)
     public void testConvertWithExternalServiceFailure() {
-        fail("Test is not implemented yet.");
+        currencyConvertorMock.convert(Currency.getInstance("EUR"), Currency.getInstance("USD"), new BigDecimal("1"));
     }
 
 }
