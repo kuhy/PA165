@@ -16,6 +16,6 @@ public class MainXml {
             CurrencyConvertorImpl.class);
 
         System.out.println(currencyConvertor.convert(Currency.getInstance("EUR"),
-            Currency.getInstance("CZK"), new BigDecimal("10")));
+            Currency.getInstance("CZK"), new BigDecimal("1")));
     }
 }
