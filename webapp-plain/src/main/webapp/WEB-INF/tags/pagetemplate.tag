@@ -32,7 +32,7 @@
 </div>
 
 <footer id="footer">
-    <p>&copy; Masaryk University</p>
+    <p>&copy; Masaryk University, ${currentyear}</p>
 </footer>
 
 </body>
